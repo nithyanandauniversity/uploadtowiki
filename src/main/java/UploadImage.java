@@ -2,11 +2,11 @@
 import okhttp3.HttpUrl;
 import org.fastily.jwiki.core.Wiki;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Stream;
+import java.util.Objects;
 
 public class UploadImage {
 
@@ -17,12 +17,13 @@ public class UploadImage {
                 ).withLogin("Admin@ImageUpload", "jak9e92urqltebqsfpuao28jh1jecada")
                 .build();
 
-        ArrayList<String> images = new ArrayList<>(
-                Arrays.asList("2016-5may-2nd-nithyananda-diary_IMG_6811_ujjain-aadheenam-kumbh-mela-shivoham-process-swamiji.jpg")
-                );
+        String dirpath = "/repo/images/";
+        var dir = new File(dirpath);
+
+        ArrayList<String> images = new ArrayList<>(Arrays.asList(Objects.requireNonNull(dir.list())));
 
         images.parallelStream().forEach(image -> {
-            boolean result = wiki.upload(Path.of("/repo/" + image), "File:" + image, image, "image upload");
+            boolean result = wiki.upload(Path.of(dirpath + image), "File:" + image, image, "image upload");
             if(!result)
                 System.out.println("Failed for: " + image);
         });
