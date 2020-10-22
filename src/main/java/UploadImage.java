@@ -4,7 +4,9 @@ import org.fastily.jwiki.core.Wiki;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class UploadImage {
 
@@ -15,10 +17,14 @@ public class UploadImage {
                 ).withLogin("Admin@ImageUpload", "jak9e92urqltebqsfpuao28jh1jecada")
                 .build();
 
-        String[] images = {"2016-5may-2nd-nithyananda-diary_IMG_6811_ujjain-aadheenam-kumbh-mela-shivoham-process-swamiji.jpg"};
+        ArrayList<String> images = new ArrayList<>(
+                Arrays.asList("2016-5may-2nd-nithyananda-diary_IMG_6811_ujjain-aadheenam-kumbh-mela-shivoham-process-swamiji.jpg")
+                );
 
-        for (String image : images) {
-            wiki.upload(Path.of("/repo/" + image), "File:" + image, image, "image upload");
-        }
+        images.parallelStream().forEach(image -> {
+            boolean result = wiki.upload(Path.of("/repo/" + image), "File:" + image, image, "image upload");
+            if(!result)
+                System.out.println("Failed for: " + image);
+        });
     }
 }
